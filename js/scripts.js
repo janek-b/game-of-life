@@ -1,9 +1,30 @@
 $(function() {
   var canvas = document.getElementById('canvas');
   var ctx = canvas.getContext('2d');
+  canvas.addEventListener("mousedown", getPosition, false);
 
   var width = canvas.width;
   var height = canvas.height;
+
+  function getPosition(event) {
+    var x = event.x;
+    var y = event.y;
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
+
+    x = Math.floor(x/10);
+    y = Math.floor(y/10);
+
+    var newGlider = glider.map(function(cell) {
+      return [cell[0] + x, cell[1] + y];
+    });
+    newGlider.forEach(function(cell) {
+      currentLife.push(cell);
+    })
+    drawLife(currentLife);
+    console.log(x);
+    console.log(y);
+  }
 
   function drawGrid() {
     for (var w = 0; w < width; w = w+10) {
@@ -28,7 +49,7 @@ $(function() {
   drawGrid();
 
   var gliderGun = [[2,6],[2,7],[3,6],[3,7],[12,6],[12,7],[12,8],[13,5],[13,9],[14,4],[14,10],[15,4],[15,10],[16,7],[17,5],[17,9],[18,6],[18,7],[18,8],[19,7],[22,4],[22,5],[22,6],[23,4],[23,5],[23,6],[24,3],[24,7],[26,2],[26,3],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
-  var glider = [[10,10],[10,11],[11,10],[11,12],[12,10]];
+  var glider = [[1,1],[1,2],[2,1],[2,3],[3,1]];
   var currentLife = gliderGun.slice();
   var nextLife = [];
 
@@ -88,12 +109,20 @@ $(function() {
     };
   };
 
-  $("#next").click(function() {
-    setInterval(function() {
-      calcNextLife();
-      currentLife = nextLife.slice();
-      nextLife = [];
-      drawLife(currentLife);
-    }, 50);
+  function start() {
+    calcNextLife();
+    currentLife = nextLife.slice();
+    nextLife = [];
+    drawLife(currentLife);
+  }
+
+  var startGame;
+
+  $("#start").click(function() {
+    startGame = setInterval(start, 50);
   });
+
+  $("#stop").click(function() {
+    clearInterval(startGame);
+  })
 });
