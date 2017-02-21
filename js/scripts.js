@@ -46,12 +46,24 @@ $(function() {
     ctx.fillRect(x*10, y*10, 10, 10);
   };
 
-  drawGrid();
-
   var gliderGun = [[2,6],[2,7],[3,6],[3,7],[12,6],[12,7],[12,8],[13,5],[13,9],[14,4],[14,10],[15,4],[15,10],[16,7],[17,5],[17,9],[18,6],[18,7],[18,8],[19,7],[22,4],[22,5],[22,6],[23,4],[23,5],[23,6],[24,3],[24,7],[26,2],[26,3],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
   var glider = [[1,1],[1,2],[2,1],[2,3],[3,1]];
-  var currentLife = gliderGun.slice();
+  var currentLife = [];
   var nextLife = [];
+  // currentLife = gliderGun.slice();
+
+
+  function randomStart() {
+    for (var x = 0; x < width/10; x++) {
+      for (var y = 0; y < height/10; y++) {
+        var currentCell = [x, y];
+        var rng = Math.round(Math.random());
+        if (rng === 1) {
+          currentLife.push(currentCell);
+        }
+      };
+    };
+  }
 
   function drawLife(life) {
     ctx.clearRect(0, 0, width, height);
@@ -124,5 +136,15 @@ $(function() {
 
   $("#stop").click(function() {
     clearInterval(startGame);
-  })
+  });
+
+  $("#glidergun").click(function() {
+    currentLife = gliderGun.slice();
+    drawLife(currentLife);
+  });
+
+  $("#random").click(function() {
+    randomStart();
+    drawLife(currentLife);
+  });
 });
