@@ -10,13 +10,13 @@ $(function() {
   var cellHeight = height/cellSize
 
   function getPosition(event) {
-    var x = event.x;
-    var y = event.y;
+    var x = event.pageX;
+    var y = event.pageY;
     x -= canvas.offsetLeft;
     y -= canvas.offsetTop;
 
     x = Math.floor(x/cellSize);
-    y = Math.floor(y/cell);
+    y = Math.floor(y/cellSize);
 
     var newGlider = glider.map(function(cell) {
       return [cell[0] + x, cell[1] + y];
