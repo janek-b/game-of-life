@@ -5,6 +5,9 @@ $(function() {
 
   var width = canvas.width;
   var height = canvas.height;
+  var cellSize = 5
+  var cellWidth = width/cellSize
+  var cellHeight = height/cellSize
 
   function getPosition(event) {
     var x = event.x;
@@ -12,8 +15,8 @@ $(function() {
     x -= canvas.offsetLeft;
     y -= canvas.offsetTop;
 
-    x = Math.floor(x/10);
-    y = Math.floor(y/10);
+    x = Math.floor(x/cellSize);
+    y = Math.floor(y/cell);
 
     var newGlider = glider.map(function(cell) {
       return [cell[0] + x, cell[1] + y];
@@ -27,13 +30,13 @@ $(function() {
   }
 
   function drawGrid() {
-    for (var w = 0; w < width; w = w+10) {
+    for (var w = 0; w < width; w = w+cellSize) {
       ctx.beginPath();
       ctx.moveTo(w, 0);
       ctx.lineTo(w, height);
       ctx.stroke();
     };
-    for (var h = 0; h < height; h = h+10) {
+    for (var h = 0; h < height; h = h+cellSize) {
       ctx.beginPath();
       ctx.moveTo(0, h);
       ctx.lineTo(width, h);
@@ -43,7 +46,7 @@ $(function() {
 
   function drawCell(x, y) {
     ctx.fillStyle = 'green';
-    ctx.fillRect(x*10, y*10, 10, 10);
+    ctx.fillRect(x*cellSize, y*cellSize, cellSize, cellSize);
   };
 
   function drawLife(life) {
@@ -65,9 +68,9 @@ $(function() {
   var nextLife = [];
 
   function emptyStart(life) {
-    for (var x = 0; x < width/10; x++) {
+    for (var x = 0; x < cellWidth; x++) {
       life[x] = [];
-      for (var y = 0; y < height/10; y++) {
+      for (var y = 0; y < cellHeight; y++) {
         life[x][y] = 0;
       };
     };
@@ -76,8 +79,8 @@ $(function() {
   function randomStart() {
     emptyStart(currentLife);
     emptyStart(nextLife);
-    for (var x = 0; x < width/10; x++) {
-      for (var y = 0; y < height/10; y++) {
+    for (var x = 0; x < cellWidth; x++) {
+      for (var y = 0; y < cellHeight; y++) {
         currentLife[x][y] = Math.round(Math.random());
       };
     };
@@ -96,8 +99,8 @@ $(function() {
   drawLife(currentLife);
 
   function onGrid(x, y) {
-    if (x >= 0 && x < width/10) {
-      if (y >= 0 && y < height/10) {
+    if (x >= 0 && x < cellWidth) {
+      if (y >= 0 && y < cellHeight) {
         return true;
       } else {
         return false;
@@ -136,8 +139,8 @@ $(function() {
   };
 
   function calcNextLife() {
-    for (var x = 0; x < width/10; x++) {
-      for (var y = 0; y < height/10; y++) {
+    for (var x = 0; x < cellWidth; x++) {
+      for (var y = 0; y < cellHeight; y++) {
         cellLifeCycle(x, y);
       };
     };
