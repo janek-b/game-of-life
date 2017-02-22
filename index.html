@@ -9,12 +9,28 @@
   </head>
   <body>
     <div class="container">
-      <canvas id="canvas" width="900" height="600"></canvas>
-
-      <button type="button" id="start">Start</button>
-      <button type="button" id="stop">Stop</button>
-      <button type="button" id="random">Random</button>
-      <button type="button" id="glidergun">Glider Gun</button>
+      <div class="jumbotron">
+        <h1>Conway's Game of Life</h1>
+      </div>
+      <div class="row">
+        <canvas id="canvas" width="900" height="600"></canvas>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="well">
+            <button type="button" class="btn btn-default pull-left" id="start">Start</button>
+            <button type="button" class="btn btn-default pull-right" id="stop">Stop</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <div class="well">
+            <button type="button" class="btn btn-default pull-left" id="random">Random</button>
+            <button type="button" class="btn btn-default pull-right" id="glidergun">Glider Gun</button>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

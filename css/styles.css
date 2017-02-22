@@ -3,3 +3,12 @@
   margin: auto;
   display: block;
 }
+
+h1 {
+  text-align: center;
+}
+
+.well {
+  margin-top: 10px;
+  height: 75px;
+}
