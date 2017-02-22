@@ -19,7 +19,7 @@ $(function() {
       return [cell[0] + x, cell[1] + y];
     });
     newGlider.forEach(function(cell) {
-      currentLife.push(cell);
+      currentLife[cell[0]][cell[1]] = 1;
     })
     drawLife(currentLife);
     console.log(x);
@@ -46,51 +46,76 @@ $(function() {
     ctx.fillRect(x*10, y*10, 10, 10);
   };
 
+  function drawLife(life) {
+    ctx.clearRect(0, 0, width, height);
+    for (var x = 0; x < life.length; x++) {
+      for (var y = 0; y < life[x].length; y++) {
+        if (life[x][y] === 1) {
+          drawCell(x, y)
+        };
+      };
+    };
+    drawGrid();
+  };
+
   var gliderGun = [[2,6],[2,7],[3,6],[3,7],[12,6],[12,7],[12,8],[13,5],[13,9],[14,4],[14,10],[15,4],[15,10],[16,7],[17,5],[17,9],[18,6],[18,7],[18,8],[19,7],[22,4],[22,5],[22,6],[23,4],[23,5],[23,6],[24,3],[24,7],[26,2],[26,3],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
   var glider = [[1,1],[1,2],[2,1],[2,3],[3,1]];
 
   var currentLife = [];
   var nextLife = [];
 
-
-  function randomStart() {
+  function emptyStart(life) {
     for (var x = 0; x < width/10; x++) {
+      life[x] = [];
       for (var y = 0; y < height/10; y++) {
-        var currentCell = [x, y];
-        var rng = Math.round(Math.random());
-        if (rng === 1) {
-          currentLife.push(currentCell);
-        }
+        life[x][y] = 0;
       };
     };
   }
 
-  function drawLife(life) {
-    ctx.clearRect(0, 0, width, height);
-    life.forEach(function(cell) {
-      drawCell(cell[0], cell[1]);
-    });
-    drawGrid();
-  }
-
-  drawLife(currentLife);
-
-  function inArray(cell, array) {
-    if (array.find(arrayCell => arrayCell[0] === cell[0] && arrayCell[1] === cell[1])) {
-      return true;
-    } else {
-      return false;
-    }
+  function randomStart() {
+    emptyStart(currentLife);
+    emptyStart(nextLife);
+    for (var x = 0; x < width/10; x++) {
+      for (var y = 0; y < height/10; y++) {
+        currentLife[x][y] = Math.round(Math.random());
+      };
+    };
   };
 
-  function neighborCount(cell) {
+  function initializeShape(shape) {
+    emptyStart(currentLife);
+    emptyStart(nextLife);
+    shape.forEach(function(cell) {
+      currentLife[cell[0]][cell[1]] = 1;
+    });
+  };
+
+  emptyStart(currentLife);
+  emptyStart(nextLife);
+  drawLife(currentLife);
+
+  function onGrid(x, y) {
+    if (x >= 0 && x < width/10) {
+      if (y >= 0 && y < height/10) {
+        return true;
+      } else {
+        return false;
+      };
+    } else {
+      return false;
+    };
+  };
+
+  function neighborCount(x, y) {
     var neighbors = 0;
-    for (var x = -1; x < 2; x++) {
-      for (var y = -1; y < 2; y++) {
-        if ((x != 0) || (y != 0)) {
-          neighborCell = [cell[0]+x, cell[1]+y];
-          if (inArray(neighborCell, currentLife)) {
-            neighbors += 1;
+    for (var i = -1; i < 2; i++) {
+      for (var j = -1; j < 2; j++) {
+        if ((i != 0) || (j != 0)) {
+          if (onGrid(x+i, y+j)) {
+            if (currentLife[x+i][y+j] === 1) {
+              neighbors += 1;
+            };
           };
         };
       };
@@ -98,14 +123,14 @@ $(function() {
     return neighbors;
   };
 
-  function cellLifeCycle(cell) {
-    if (inArray(cell, currentLife)) {
-      if (neighborCount(cell) >= 2 && neighborCount(cell) <= 3) {
-        nextLife.push(cell);
+  function cellLifeCycle(x, y) {
+    if (currentLife[x][y] === 1) {
+      if (neighborCount(x, y) >= 2 && neighborCount(x, y) <= 3) {
+        nextLife[x][y] = 1;
       };
     } else {
-      if (neighborCount(cell) === 3) {
-        nextLife.push(cell);
+      if (neighborCount(x, y) === 3) {
+        nextLife[x][y] = 1;
       };
     };
   };
@@ -113,8 +138,7 @@ $(function() {
   function calcNextLife() {
     for (var x = 0; x < width/10; x++) {
       for (var y = 0; y < height/10; y++) {
-        var currentCell = [x, y];
-        cellLifeCycle(currentCell);
+        cellLifeCycle(x, y);
       };
     };
   };
@@ -122,7 +146,7 @@ $(function() {
   function start() {
     calcNextLife();
     currentLife = nextLife.slice();
-    nextLife = [];
+    emptyStart(nextLife);
     drawLife(currentLife);
   }
 
@@ -137,7 +161,7 @@ $(function() {
   });
 
   $("#glidergun").click(function() {
-    currentLife = gliderGun.slice();
+    initializeShape(gliderGun);
     drawLife(currentLife);
   });
 
