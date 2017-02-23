@@ -5,9 +5,11 @@ $(function() {
 
   var width = canvas.width;
   var height = canvas.height;
-  var cellSize = 5
-  var cellWidth = width/cellSize
-  var cellHeight = height/cellSize
+  var cellSize = 2;
+  var gridLineWidth = cellSize/10;
+  var cellWidth = width/cellSize;
+  var cellHeight = height/cellSize;
+  ctx.lineWidth = gridLineWidth;
 
   function getPosition(event) {
     var x = event.pageX;
@@ -21,9 +23,7 @@ $(function() {
     var newGlider = glider.map(function(cell) {
       return [cell[0] + x, cell[1] + y];
     });
-    newGlider.forEach(function(cell) {
-      currentLife[cell[0]][cell[1]] = 1;
-    })
+    insertShape(newGlider);
     drawLife(currentLife);
     console.log(x);
     console.log(y);
@@ -92,13 +92,19 @@ $(function() {
     };
   };
 
+  function insertShape(shape) {
+    shape.forEach(function(cell) {
+      if (onGrid(cell[0], cell[1])) {
+        currentLife[cell[0]][cell[1]] = 1;
+      };
+    });
+  };
+
   // loop through shape array and set each cell to alive in currentLife array
   function initializeShape(shape) {
     emptyStart(currentLife);
     emptyStart(nextLife);
-    shape.forEach(function(cell) {
-      currentLife[cell[0]][cell[1]] = 1;
-    });
+    insertShape(shape);
   };
 
   emptyStart(currentLife);
