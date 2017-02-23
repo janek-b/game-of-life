@@ -61,12 +61,18 @@ $(function() {
     drawGrid();
   };
 
+  // arrays of [x, y] coordinates of live cells for shapes
   var gliderGun = [[2,6],[2,7],[3,6],[3,7],[12,6],[12,7],[12,8],[13,5],[13,9],[14,4],[14,10],[15,4],[15,10],[16,7],[17,5],[17,9],[18,6],[18,7],[18,8],[19,7],[22,4],[22,5],[22,6],[23,4],[23,5],[23,6],[24,3],[24,7],[26,2],[26,3],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
   var glider = [[1,1],[1,2],[2,1],[2,3],[3,1]];
 
+
+  // initialize empty arrays for current and next life
   var currentLife = [];
   var nextLife = [];
 
+  // create 2 dimensional array for x, y coordinates for entire grid and set all values to 0.
+  // a cells state can be accessed by passing in it's x and y coordinates to life[x][y].
+  // a value of 0 means the cell is dead, a value of 1 means it's alive.
   function emptyStart(life) {
     for (var x = 0; x < cellWidth; x++) {
       life[x] = [];
@@ -86,6 +92,7 @@ $(function() {
     };
   };
 
+  // loop through shape array and set each cell to alive in currentLife array
   function initializeShape(shape) {
     emptyStart(currentLife);
     emptyStart(nextLife);
@@ -98,6 +105,8 @@ $(function() {
   emptyStart(nextLife);
   drawLife(currentLife);
 
+  // checks if a given cell is within the grid.
+  // used when counting neighbors to avoid index error from neighbor cells that are outside of the bounds of the grid.
   function onGrid(x, y) {
     if (x >= 0 && x < cellWidth) {
       if (y >= 0 && y < cellHeight) {
@@ -126,6 +135,12 @@ $(function() {
     return neighbors;
   };
 
+
+  // This is the main improvement:
+  // to check if a cell is alive, it checks if the currentLife array has a 0 or a 1 for the cells x, y coordinates.
+  // previously it was checking if a cell array [x, y] was in the currentLife array.
+  // this required looping over the entire currentLife array and comparing the values in each element array to the values in the cell array the function was called with.
+  // since it is now dealing with just x, y values all other functions had to be changed to accept an x and a y variable instead of a cell array element of [x, y]
   function cellLifeCycle(x, y) {
     if (currentLife[x][y] === 1) {
       if (neighborCount(x, y) >= 2 && neighborCount(x, y) <= 3) {
