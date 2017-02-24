@@ -8,28 +8,63 @@
     <title>Conway's game of life</title>
   </head>
   <body>
-    <div class="container">
-      <div class="jumbotron">
-        <h1>Conway's Game of Life</h1>
-      </div>
+    <div class="container-fluid">
       <div class="row">
-        <canvas id="canvas" width="900" height="600"></canvas>
-      </div>
-      <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-          <div class="well">
-            <button type="button" class="btn btn-default pull-left" id="start">Start</button>
-            <button type="button" class="btn btn-default pull-right" id="stop">Stop</button>
+        <div class="col-md-12">
+          <div class="page-header">
+            <h1>Conway's Game of Life</h1>
           </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4 col-md-offset-4">
+        <br>
+        <div class="col-md-2">
           <div class="well">
-            <button type="button" class="btn btn-default pull-left" id="random">Random</button>
-            <button type="button" class="btn btn-default pull-right" id="glidergun">Glider Gun</button>
+            <form id="canvasForm">
+              <div class="form-group">
+                <input type="number" id="width" class="form-control" placeholder="Enter the width. ex. 900">
+                <input type="number" id="height" class="form-control" placeholder="Enter the height. ex. 600">
+                <input type="number" id="cellSize" class="form-control" placeholder="Enter cellsize. ex. 1-10">
+              </div>
+              <button type="submit" class="btn btn-primary btn-block" name="button">Create Grid</button>
+            </form>
+          </div>
+          <div class="well">
+            <h4>Populate Grid</h4>
+            <button type="button" class="btn btn-primary btn-block" id="random">Random</button>
+            <button type="button" class="btn btn-primary btn-block" id="glidergun">Glider Gun</button>
+          </div>
+          <div class="well">
+            <button type="button" class="btn btn-primary btn-block" id="start">Start</button>
+            <button type="button" class="btn btn-primary btn-block" id="stop">Stop</button>
+          </div>
+          <div class="well">
+            <h4>Click on cell will:</h4>
+            <div class="radio">
+              <label>
+                <input type="radio" name="onClick" value="cell" checked>
+                Make cell alive
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="onClick" value="glider">
+                Insert Glider
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" name="onClick" value="pulsar">
+                Insert Pulsar
+              </label>
+            </div>
           </div>
         </div>
+        <div class="col-md-8" id="canvasCol">
+          <!-- <canvas id="canvas" width="900" height="600"></canvas> -->
+        </div>
+      </div>
+      <div class="row">
       </div>
     </div>
   </body>

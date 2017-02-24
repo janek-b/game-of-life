@@ -84,6 +84,10 @@ function processLife() {
 // arrays of [x, y] coordinates of live cells for shapes
 var gliderGun = [[2,6],[2,7],[3,6],[3,7],[12,6],[12,7],[12,8],[13,5],[13,9],[14,4],[14,10],[15,4],[15,10],[16,7],[17,5],[17,9],[18,6],[18,7],[18,8],[19,7],[22,4],[22,5],[22,6],[23,4],[23,5],[23,6],[24,3],[24,7],[26,2],[26,3],[26,7],[26,8],[36,4],[36,5],[37,4],[37,5]];
 var glider = [[1,1],[1,2],[2,1],[2,3],[3,1]];
+var pulsar = [[1,2],[1,3],[1,4],[2,1],[2,6],[3,1],[3,6],[4,1],[4,6],[6,2],[6,3],[6,4],
+[1,-2],[1,-3],[1,-4],[2,-1],[2,-6],[3,-1],[3,-6],[4,-1],[4,-6],[6,-2],[6,-3],[6,-4],
+[-1,2],[-1,3],[-1,4],[-2,1],[-2,6],[-3,1],[-3,6],[-4,1],[-4,6],[-6,2],[-6,3],[-6,4],
+[-1,-2],[-1,-3],[-1,-4],[-2,-1],[-2,-6],[-3,-1],[-3,-6],[-4,-1],[-4,-6],[-6,-2],[-6,-3],[-6,-4]]
 
 function randomStart() {
   emptyStart(currentLife);
@@ -113,84 +117,108 @@ function initializeShape(shape) {
 
 // Front-End
 $(function() {
-  var canvas = document.getElementById('canvas');
-  var ctx = canvas.getContext('2d');
-  canvas.addEventListener("mousedown", getPosition, false);
+  function initializeGame(cellSizeInput) {
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.addEventListener("mousedown", getPosition, false);
 
-  var width = canvas.width;
-  var height = canvas.height;
-  var cellSize = 4;
-  var gridLineWidth = cellSize/10;
-  gridWidth = width/cellSize;
-  gridHeight = height/cellSize;
-  ctx.lineWidth = gridLineWidth;
+    var width = canvas.width;
+    var height = canvas.height;
+    var cellSize = cellSizeInput;
+    var gridLineWidth = cellSize/10;
+    gridWidth = width/cellSize;
+    gridHeight = height/cellSize;
+    ctx.lineWidth = gridLineWidth;
 
-  function getPosition(event) {
-    var x = Math.floor((event.pageX - canvas.offsetLeft)/cellSize);
-    var y = Math.floor((event.pageY - canvas.offsetTop)/cellSize);
+    function getPosition(event) {
+      var rect = canvas.getBoundingClientRect();
+      var x = Math.floor((event.clientX - rect.left)/cellSize);
+      var y = Math.floor((event.clientY - rect.top)/cellSize);
 
-    var newGlider = glider.map(function(cell) {
-      return [cell[0] + x, cell[1] + y];
-    });
-    insertShape(newGlider);
-    drawLife(currentLife);
-  }
+      var onClick = $("input:radio[name=onClick]:checked").val();
+      if (onClick === "glider") {
+        var newGlider = glider.map(function(cell) {
+          return [cell[0] + x, cell[1] + y];
+        });
+        insertShape(newGlider);
+      } else if (onClick === "cell") {
+        var cell = [[x, y]];
+        insertShape(cell);
+      } else if (onClick === "pulsar") {
+        var newPulsar = pulsar.map(function(cell) {
+          return [cell[0] + x, cell[1] + y];
+        });
+        insertShape(newPulsar);
+      }
+      drawLife(currentLife);
+    }
 
-  function drawGrid() {
-    for (var w = 0; w < width; w = w+cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(w, 0);
-      ctx.lineTo(w, height);
-      ctx.stroke();
-    };
-    for (var h = 0; h < height; h = h+cellSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, h);
-      ctx.lineTo(width, h);
-      ctx.stroke();
-    };
-  };
-
-  function drawCell(x, y) {
-    ctx.fillStyle = 'green';
-    ctx.fillRect(x*cellSize, y*cellSize, cellSize, cellSize);
-  };
-
-  function drawLife(life) {
-    ctx.clearRect(0, 0, width, height);
-    for (var x = 0; x < life.length; x++) {
-      for (var y = 0; y < life[x].length; y++) {
-        if (life[x][y] === 1) {
-          drawCell(x, y)
-        };
+    function drawGrid() {
+      for (var w = 0; w < width; w = w+cellSize) {
+        ctx.beginPath();
+        ctx.moveTo(w, 0);
+        ctx.lineTo(w, height);
+        ctx.stroke();
+      };
+      for (var h = 0; h < height; h = h+cellSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        ctx.lineTo(width, h);
+        ctx.stroke();
       };
     };
-    drawGrid();
+
+    function drawCell(x, y) {
+      ctx.fillStyle = 'green';
+      ctx.fillRect(x*cellSize, y*cellSize, cellSize, cellSize);
+    };
+
+    function drawLife(life) {
+      ctx.clearRect(0, 0, width, height);
+      for (var x = 0; x < life.length; x++) {
+        for (var y = 0; y < life[x].length; y++) {
+          if (life[x][y] === 1) {
+            drawCell(x, y)
+          };
+        };
+      };
+      drawGrid();
+    };
+
+    drawLife(currentLife);
+
+    function start() {
+      drawLife(processLife());
+    }
+
+    var startGame;
+
+    $("#start").click(function() {
+      startGame = setInterval(start, 70);
+    });
+
+    $("#stop").click(function() {
+      clearInterval(startGame);
+    });
+
+    $("#glidergun").click(function() {
+      initializeShape(gliderGun, gridWidth, gridHeight);
+      drawLife(currentLife);
+    });
+
+    $("#random").click(function() {
+      randomStart(gridWidth, gridHeight);
+      drawLife(currentLife);
+    });
+
   };
 
-  drawLife(currentLife);
-
-  function start() {
-    drawLife(processLife());
-  }
-
-  var startGame;
-
-  $("#start").click(function() {
-    startGame = setInterval(start, 50);
-  });
-
-  $("#stop").click(function() {
-    clearInterval(startGame);
-  });
-
-  $("#glidergun").click(function() {
-    initializeShape(gliderGun, gridWidth, gridHeight);
-    drawLife(currentLife);
-  });
-
-  $("#random").click(function() {
-    randomStart(gridWidth, gridHeight);
-    drawLife(currentLife);
-  });
+  $("#canvasForm").submit(function() {
+    event.preventDefault();
+    var width = parseInt($("input#width").val())
+    var height = parseInt($("input#height").val())
+    var cellSize = parseInt($("input#cellSize").val())
+    $("#canvasCol").html("<canvas id='canvas' width='"+width+"' height='"+height+"'></canvas>")
+    initializeGame(cellSize);
+  })
 });
